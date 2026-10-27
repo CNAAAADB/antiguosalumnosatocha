@@ -1,7 +1,7 @@
 export const site = {
  name:'Asociación Antiguos Alumnos y Alumnas Salesianos Atocha',
  email:'antiguosalumnos@salesianosatocha.es',
- signup:'https://forms.gle/wzt7jBntxGSVKyKm9',
+ signup:'https://boscogest.com/register',
  instagram:'https://www.instagram.com/antiguosalumnosatocha/',
  facebook:'https://www.facebook.com/AAAADBAtocha/',
  official:'https://salesianosatocha.es/asociacion-de-antiguos-alumnos/',
