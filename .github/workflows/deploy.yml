@@ -1,6 +1,7 @@
 name: Publicar en GitHub Pages
-# Publicación manual hasta validar contenidos, permisos de fotos y datos legales.
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
@@ -12,17 +13,25 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
+      - name: Configurar GitHub Pages
+        id: pages
+        uses: actions/configure-pages@v5
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
       - run: npm ci
       - run: npm run build
+        env:
+          SITE_URL: ${{ steps.pages.outputs.origin }}
+          SITE_BASE: ${{ steps.pages.outputs.base_path || '/' }}
       - run: npm test
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+        env:
+          SITE_BASE: ${{ steps.pages.outputs.base_path || '/' }}
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: dist
   deploy:

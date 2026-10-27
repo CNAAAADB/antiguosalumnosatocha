@@ -28,11 +28,13 @@ Consultar [la guía editorial](docs/CONTENIDOS.md) y [las fuentes y pendientes](
 
 ## GitHub Pages
 
-El workflow `Comprobar web` compila y verifica cada PR. `Publicar en GitHub Pages` es manual para esta primera versión: tras integrar la rama, seleccionar **Settings → Pages → Source: GitHub Actions** y ejecutarlo desde **Actions** una vez revisados los contenidos.
+El workflow `Comprobar web` compila y verifica cada PR. `Publicar en GitHub Pages` compila, comprueba y despliega automáticamente cada cambio en `main`. También se puede ejecutar desde **Actions → Publicar en GitHub Pages → Run workflow**, seleccionando `main`.
 
-El repositorio es privado. La posibilidad de usar Pages dependerá del plan de la organización; no se cambia su visibilidad automáticamente. No se ha comprado ni configurado ningún dominio.
+En **Settings → Pages → Build and deployment → Source** debe estar seleccionado **GitHub Actions**, no publicación desde una rama con Jekyll. El workflow sube únicamente `dist/` y publica solo si la compilación y las pruebas terminan correctamente. No requiere secretos adicionales: utiliza el `GITHUB_TOKEN` con permisos de Pages y OpenID Connect.
 
-Para un dominio propio: cambiar `site` en `astro.config.mjs` a la URL final, usar `base: '/'` (también admite `SITE_BASE=/`), configurar el dominio en GitHub y los registros DNS del proveedor, y habilitar HTTPS. El `.com` necesita redirección al dominio principal. No añadir CNAME hasta confirmar titularidad y DNS.
+URL inicial: https://cnaaaadb.github.io/antiguosalumnosatocha/
+
+El despliegue obtiene automáticamente `SITE_URL` y `SITE_BASE` de la configuración de Pages, por lo que los enlaces y recursos respetan la subruta del repositorio. Para un dominio propio, configurar el dominio en GitHub y los registros DNS del proveedor y habilitar HTTPS; el siguiente despliegue utilizará ese origen y su ruta base. El desarrollo local conserva los valores por defecto de `astro.config.mjs`, que se pueden cambiar con esas mismas variables. El `.com` necesita redirección al dominio principal. No se ha comprado ni configurado ningún dominio.
 
 ## Estado de esta entrega
 
