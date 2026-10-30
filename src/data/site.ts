@@ -1,4 +1,6 @@
 export const site = {
+ // Código público de verificación de Search Console; se completa al verificar la propiedad.
+ googleSiteVerification:'',
  name:'Asociación Antiguos Alumnos y Alumnas Salesianos Atocha',
  email:'antiguosalumnos@salesianosatocha.es',
  signup:'https://boscogest.com/register',

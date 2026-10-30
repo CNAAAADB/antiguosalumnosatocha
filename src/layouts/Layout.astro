@@ -2,13 +2,72 @@
 import '@fontsource-variable/montserrat';
 import '../styles/global.css';
 import {site} from '../data/site';
-const {title='Atocha sigue siendo tu casa',description='Encuentros, actividades e historia de la Asociación Antiguos Alumnos y Alumnas Salesianos Atocha.'}=Astro.props;
+import {seoPages} from '../data/seo';
+const {title,description,noindex=false}=Astro.props;
 const base=import.meta.env.BASE_URL;
 const url=(path='')=>`${base}${path}`;
 const nav=[['asociacion/','La Asociación'],['actividades/','Qué hacemos'],['agenda/','Agenda'],['galeria/','Galería']];
 const current=Astro.url.pathname;
+const basePath=base.replace(/\/$/,'');
+const relativePath=(current.startsWith(basePath + '/') ? current.slice(basePath.length) : current).replace(/^\/|\/$/g,'');
+const page=seoPages.find(entry=>entry.path===relativePath);
+const pageTitle=title || page?.title || 'Antiguos Alumnos Salesianos Atocha';
+const pageDescription=description || page?.description || 'Asociación de Antiguos Alumnos y Alumnas de Salesianos Atocha, Madrid.';
+const canonical=new URL(url(relativePath ? relativePath + '/' : ''),Astro.site).href;
+const home=new URL(base,Astro.site).href;
+const logo=new URL(url('logo-asociacion.png'),Astro.site).href;
+const breadcrumbs=[{name:'Inicio',url:home}];
+if(relativePath){
+ const parentPath=relativePath.split('/').slice(0,-1).join('/');
+ const parent=seoPages.find(entry=>entry.path===parentPath);
+ if(parentPath && parent) breadcrumbs.push({name:parent.name,url:new URL(url(parentPath + '/'),Astro.site).href});
+ breadcrumbs.push({name:page?.name || title || 'Página',url:canonical});
+}
+const structuredData=noindex ? null : {
+ '@context':'https://schema.org',
+ '@graph':[
+  {'@type':'Organization','@id':home + '#asociacion',name:site.name,
+   alternateName:['AA.AA. Salesianos Atocha','Antiguos Alumnos y Alumnas de Don Bosco de Atocha'],
+   url:home,logo:logo,email:site.email,
+   sameAs:[site.official,site.instagram,site.facebook]},
+  {'@type':'WebSite','@id':home + '#website',url:home,name:'Antiguos Alumnos Salesianos Atocha',
+   alternateName:'AA.AA. Salesianos Atocha',inLanguage:'es-ES',publisher:{'@id':home + '#asociacion'}},
+  {'@type':'WebPage','@id':canonical + '#webpage',url:canonical,name:pageTitle,description:pageDescription,
+   inLanguage:'es-ES',isPartOf:{'@id':home + '#website'},about:{'@id':home + '#asociacion'},
+   ...(relativePath ? {breadcrumb:{'@id':canonical + '#breadcrumb'}} : {})},
+  ...(relativePath ? [{'@type':'BreadcrumbList','@id':canonical + '#breadcrumb',
+   itemListElement:breadcrumbs.map((entry,index)=>({'@type':'ListItem',position:index+1,name:entry.name,item:entry.url}))}] : []),
+ ]
+};
 ---
-<!doctype html><html lang="es"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="description" content={description}/><meta name="theme-color" content="#142a3a"/><link rel="icon" type="image/png" href={url('logo-asociacion.png')}/><title>{title} · AA.AA. Atocha</title><link rel="canonical" href={new URL(current,Astro.site)}/><meta property="og:title" content={`${title} · AA.AA. Atocha`}/><meta property="og:description" content={description}/><meta property="og:type" content="website"/></head><body>
+<!doctype html>
+<html lang="es"><head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>{pageTitle}</title>
+<meta name="description" content={pageDescription}/>
+<meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large'}/>
+<meta name="theme-color" content="#142a3a"/>
+{site.googleSiteVerification && <meta name="google-site-verification" content={site.googleSiteVerification}/>}
+<link rel="icon" type="image/png" href={url('logo-asociacion.png')}/>
+{!noindex && <link rel="canonical" href={canonical}/>}
+<link rel="sitemap" type="application/xml" href={url('sitemap.xml')}/>
+<meta property="og:locale" content="es_ES"/>
+<meta property="og:site_name" content="Antiguos Alumnos Salesianos Atocha"/>
+<meta property="og:title" content={pageTitle}/>
+<meta property="og:description" content={pageDescription}/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content={canonical}/>
+<meta property="og:image" content={logo}/>
+<meta property="og:image:width" content="350"/>
+<meta property="og:image:height" content="350"/>
+<meta property="og:image:alt" content="Escudo de los Antiguos Alumnos y Alumnas de Don Bosco"/>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content={pageTitle}/>
+<meta name="twitter:description" content={pageDescription}/>
+<meta name="twitter:image" content={logo}/>
+{structuredData && <script type="application/ld+json" set:html={JSON.stringify(structuredData).replace(/</g,'\\u003c')}/>}
+</head><body>
 <a class="skip" href="#contenido">Saltar al contenido</a>
 <div class="topbar"><span>Una casa. Muchas generaciones.</span><a href={site.instagram} target="_blank" rel="noopener noreferrer">Encuéntranos en Instagram ↗</a></div>
 <header class="header"><a class="brand" href={url()} aria-label="AA.AA. Atocha, inicio"><img class="brand-logo" src={url('logo-asociacion.png')} alt="Escudo de los Antiguos Alumnos y Alumnas de Don Bosco" width="350" height="350"/><span class="brand-description">Antiguos Alumnos y Alumnas<br/>de Don Bosco<br/>Salesianos Atocha · Madrid</span></a><button class="menu-toggle" aria-expanded="false" aria-controls="navigation">Menú <span aria-hidden="true">＋</span></button><nav id="navigation" aria-label="Principal">{nav.map(([path,label])=><a href={url(path)} aria-current={current===url(path)?'page':undefined}>{label}</a>)}<a class="nav-cta" href={url('participa/')}>Forma parte <span aria-hidden="true">↗</span></a></nav></header>
