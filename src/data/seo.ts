@@ -12,6 +12,7 @@ export const seoPages = [
  {path:'contacto',name:'Contacto',title:'Contacto en Madrid | ' + brand,description:'Contacta con la Asociación de Antiguos Alumnos y Alumnas de Salesianos Atocha, Madrid. Correo, redes sociales e información para preparar una visita.'},
  {path:'fuentes',name:'Fuentes y fotografías',title:'Fuentes y fotografías | ' + brand,description:'Consulta las fuentes de la historia de Salesianos Atocha, las actividades de sus antiguos alumnos y la procedencia de las fotografías de esta web.'},
  {path:'privacidad',name:'Privacidad',title:'Privacidad | ' + brand,description:'Información sobre privacidad y funcionamiento de la web de los Antiguos Alumnos de Salesianos Atocha: servicios externos, imágenes y contacto por correo.'},
+ {path:'connecting',name:'Connecting',title:'Connecting: encuentro y participación juvenil | ' + brand,description:'Conoce Connecting, el proyecto de convivencia y participación juvenil de Antiguos Alumnos Salesianos Atocha con Red InterLavapiés. Encuentros, fechas y carteles.'},
  ...activities.map(activity=>({
    path:'actividades/' + activity.slug,
    name:activity.tag,

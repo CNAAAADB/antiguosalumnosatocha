@@ -1,3 +1,4 @@
+import {connectingMeetings} from './connecting';
 export const site = {
  // Código público de verificación de Search Console; se completa al verificar la propiedad.
  googleSiteVerification:'',
@@ -22,7 +23,7 @@ export const photos = [
  {src:'https://salesianos.info/wp-content/uploads/2026/02/212-ATOCHA-salesianos.jpeg',alt:'Vista aérea histórica de Salesianos Atocha entre 1960 y 1970',title:'Atocha desde el aire, 1960–1970',category:'Archivo',credit:'Centro Patrimonio Salesiano SSM · Salesianos España',source:sources.history},
 ];
 // Solo convocatorias públicas confirmadas. Fechas ISO con zona horaria.
-export const events: {title:string;date:string;location:string;url:string;published:boolean}[] = [];
+export const events: {title:string;date:string;location:string;url:string;published:boolean}[] = connectingMeetings.map(meeting=>({title:'Connecting · '+meeting.title,date:meeting.date,location:meeting.location,url:import.meta.env.BASE_URL+'connecting/#'+meeting.slug,published:true}));
 export const activities = [
  {slug:'encuentros',number:'01',title:'Volver a encontrarnos',tag:'Encuentros y convivencia',text:'Mantener el vínculo con quienes compartieron nuestra etapa en Atocha y abrir espacio a nuevas generaciones.',detail:'La Asociación es un punto de encuentro para antiguos alumnos y alumnas. Las jornadas de convivencia permiten volver al colegio, compartir experiencias y seguir formando parte de la comunidad salesiana.',source:sources.association},
  {slug:'deporte-y-ajedrez',number:'02',title:'Compartir la partida',tag:'Deporte y ajedrez',text:'El patio y el tablero siguen siendo lugares para compartir tiempo y hacer comunidad.',detail:'La jornada de bienvenida del 26 de septiembre de 2026, organizada por la sección joven, convocó torneos de fútbol, baloncesto, voleibol y ajedrez, además de un aperitivo de convivencia. Es una actividad celebrada, no una próxima convocatoria.',source:sources.sports},

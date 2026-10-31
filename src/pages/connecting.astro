@@ -1,0 +1,67 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ConnectingPoster from '../components/ConnectingPoster.astro';
+import {site} from '../data/site';
+import {connecting,connectingMeetings,nextConnectingMeeting} from '../data/connecting';
+const b=import.meta.env.BASE_URL;
+const next=nextConnectingMeeting();
+const date=(value:string)=>new Intl.DateTimeFormat('es-ES',{day:'numeric',month:'long',year:'numeric',timeZone:'Europe/Madrid'}).format(new Date(value));
+const shortDate=(value:string)=>new Intl.DateTimeFormat('es-ES',{day:'numeric',month:'long',timeZone:'Europe/Madrid'}).format(new Date(value));
+const mail=`mailto:${site.email}?subject=Participar%20en%20Connecting`;
+---
+<Layout>
+<section class="connecting-hero wrap">
+ <div class="connecting-hero-copy">
+  <nav class="breadcrumb" aria-label="Ruta de navegación"><a href={b}>Inicio</a><span aria-hidden="true">/</span><span aria-current="page">Connecting</span></nav>
+  <p class="eyebrow"><span class="gold-line"></span>Encuentro · Convivencia · Participación juvenil</p>
+  <h1><span class="connecting-word">CONNECTING</span>Conocernos es<br/>el primer paso.</h1>
+  <p class="connecting-lead">Un espacio para conectar entre jóvenes, compartir experiencias y construir comunidad en Atocha.</p>
+  <div class="connecting-actions"><a class="button" href={next?'#'+next.slug:'#encuentros'}>{next?'Próximo encuentro':'Nuestros encuentros'} <span>↗</span></a><a class="text-link" href="#el-proyecto">Conoce el proyecto <span>↓</span></a></div>
+  <div class="connecting-hero-details"><span>Jóvenes con y sin origen migrante</span><span>Encuentros mensuales · Madrid</span></div>
+ </div>
+ <figure class="connecting-hero-poster"><ConnectingPoster eager={true}/><button class="connecting-poster-zoom" type="button" data-poster-open aria-haspopup="dialog">Ampliar el cartel ↗</button><figcaption>Connecting · Asociación de Antiguos Alumnos y Alumnas Salesianos Atocha</figcaption></figure>
+</section>
+<section class="connecting-intro wrap" id="el-proyecto">
+ <div><p class="eyebrow">El proyecto</p><h2>Compartir tiempo.<br/><span>Crear vínculos.</span></h2></div>
+ <div class="connecting-intro-copy"><p>Connecting es un proyecto de encuentro, convivencia y participación juvenil impulsado por la Asociación de Antiguos Alumnos y Alumnas Salesianos Atocha, en colaboración con Red InterLavapiés.</p><p>Creamos espacios de conexión entre jóvenes con y sin origen migrante, favoreciendo la acogida, el intercambio de experiencias y la participación en comunidad.</p></div>
+</section>
+<section class="connecting-method">
+ <div class="wrap"><div class="connecting-method-heading"><p class="eyebrow">Lo que nos une</p><h2>Una tarde compartida<br/>puede ser un comienzo.</h2></div>
+ <div class="connecting-pillars"><article><span class="connecting-number">01</span><h3>Conocernos</h3><p>Dinámicas participativas para presentarnos, escucharnos y compartir experiencias.</p></article><article><span class="connecting-number">02</span><h3>Convivir</h3><p>Deporte, actividades en grupo y merienda compartida para disfrutar del tiempo juntos.</p></article><article><span class="connecting-number">03</span><h3>Participar</h3><p>Propuestas comunitarias con las que fortalecer vínculos y dar vida a nuevos encuentros.</p></article></div>
+ </div>
+</section>
+{next && <section class="connecting-next wrap" aria-labelledby="next-title"><div><p class="eyebrow">La próxima cita</p><h2 id="next-title">{next.title}.</h2><p>{next.subtitle}</p></div><div class="connecting-next-date"><time datetime={next.date}>{shortDate(next.date)}</time><span>17:30 h · Sala de la Asociación</span><a class="text-link" href={'#'+next.slug}>Ver el encuentro <span>↓</span></a></div></section>}
+<section class="connecting-meetings wrap" id="encuentros">
+ <div class="section-heading"><div><p class="eyebrow">El calendario de Connecting</p><h2>Nos encontramos<br/>en Atocha.</h2></div><p>Las convocatorias del proyecto,<br/>con sus fechas y propuestas.</p></div>
+ <div class="connecting-meeting-list">
+ {connectingMeetings.map(meeting=><article class="connecting-meeting" id={meeting.slug}>
+  <figure><ConnectingPoster poster={meeting.poster} width={meeting.posterWidth} height={meeting.posterHeight} legacyFooter={meeting.legacyFooter} label={`Cartel de Connecting: ${meeting.title}. ${date(meeting.date)}, 17:30 h.`}/><button class="connecting-poster-zoom" type="button" data-poster-open aria-haspopup="dialog">Ampliar el cartel ↗</button></figure>
+  <div class="connecting-meeting-copy"><p class="eyebrow">Encuentro {meeting.number}</p><h3>{meeting.title}.</h3><p class="connecting-meeting-subtitle">{meeting.subtitle}</p><dl><div><dt>Cuándo</dt><dd><time datetime={meeting.date}>{date(meeting.date)}</time> · 17:30 h</dd></div><div><dt>Dónde</dt><dd>{meeting.location}</dd></div></dl><p>{meeting.description}</p><p>{meeting.format}</p><a class="text-link" href={connecting.instagram} target="_blank" rel="noopener noreferrer">Sigue Connecting <span>↗</span></a></div>
+ </article>)}
+ </div>
+</section>
+<section class="connecting-partners" id="quienes-lo-hacemos"><div class="wrap">
+ <p class="eyebrow">Quiénes lo hacemos</p><h2>Un proyecto compartido.</h2>
+ <div class="connecting-partner-grid">
+  <article><img class="connecting-association-logo" src={b+'logo-asociacion.png'} alt="Escudo de Antiguos Alumnos y Alumnas de Don Bosco" width="350" height="350" loading="lazy"/><p class="eyebrow">Impulsa</p><h3>Antiguos Alumnos<br/>Salesianos Atocha</h3><p>La Asociación impulsa Connecting como un espacio de encuentro, acogida y participación juvenil.</p><a class="text-link" href={b+'asociacion/'}>La Asociación <span>↗</span></a></article>
+  <article><svg class="connecting-collaborator-logo" viewBox="251 446 105 45" role="img" aria-label="Salesianos Atocha · Red InterLavapiés"><image href={b+'images/connecting/cartel-general.png'} width="400" height="500"/></svg><p class="eyebrow">En colaboración con</p><h3>Red InterLavapiés</h3><p>Connecting cuenta con la colaboración de Red InterLavapiés para compartir espacios de convivencia y comunidad.</p><a class="text-link" href={connecting.collaboratorUrl} target="_blank" rel="noopener noreferrer">Conoce la Red <span>↗</span></a></article>
+ </div>
+ <div class="connecting-funding"><img src={b+'images/connecting/eu-emblem.svg'} alt="Emblema de la Unión Europea" width="180" height="120" loading="lazy"/><div><h3>Cofinanciado por<br/>la Unión Europea</h3><p>A través del <a href="https://youth.europa.eu/solidarity_es" target="_blank" rel="noopener noreferrer">Cuerpo Europeo de Solidaridad ↗</a>.</p></div></div>
+</div></section>
+<section class="connecting-join wrap"><div><p class="eyebrow">Súmate a Connecting</p><h2>El siguiente vínculo<br/>puede empezar contigo.</h2><p>¿Quieres participar o saber más sobre los encuentros? Escríbenos o sigue las convocatorias en el Instagram del proyecto.</p></div><div class="connecting-join-actions"><a class="button" href={mail}>Quiero participar <span>↗</span></a><a class="text-link" href={connecting.instagram} target="_blank" rel="noopener noreferrer">@connecting_eu <span>↗</span></a></div></section>
+<dialog class="connecting-poster-dialog" aria-label="Cartel de Connecting"><button type="button" class="connecting-poster-close">Cerrar ×</button><div class="connecting-poster-dialog-content"></div></dialog>
+</Layout>
+<script>
+const dialog=document.querySelector<HTMLDialogElement>('.connecting-poster-dialog');
+const content=dialog?.querySelector('.connecting-poster-dialog-content');
+document.querySelectorAll<HTMLButtonElement>('[data-poster-open]').forEach(button=>{
+ button.addEventListener('click',()=>{
+  const poster=button.closest('figure')?.querySelector('.connecting-poster');
+  if(!poster||!dialog||!content)return;
+  content.replaceChildren(poster.cloneNode(true));
+  dialog.showModal();
+ });
+});
+dialog?.querySelector('.connecting-poster-close')?.addEventListener('click',()=>dialog.close());
+dialog?.addEventListener('click',event=>{if(event.target===dialog)dialog.close()});
+</script>

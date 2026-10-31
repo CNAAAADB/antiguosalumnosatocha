@@ -6,7 +6,7 @@ import {seoPages} from '../data/seo';
 const {title,description,noindex=false}=Astro.props;
 const base=import.meta.env.BASE_URL;
 const url=(path='')=>`${base}${path}`;
-const nav=[['asociacion/','La Asociación'],['actividades/','Qué hacemos'],['agenda/','Agenda'],['galeria/','Galería']];
+const nav=[['asociacion/','La Asociación'],['actividades/','Qué hacemos'],['connecting/','Connecting'],['agenda/','Agenda'],['galeria/','Galería']];
 const current=Astro.url.pathname;
 const basePath=base.replace(/\/$/,'');
 const relativePath=(current.startsWith(basePath + '/') ? current.slice(basePath.length) : current).replace(/^\/|\/$/g,'');

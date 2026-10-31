@@ -6,9 +6,9 @@ const root=new URL('../dist/',import.meta.url).pathname;
 async function files(dir){let result=[];for(const e of await readdir(dir,{withFileTypes:true})){const p=join(dir,e.name);result.push(...e.isDirectory()?await files(p):[p])}return result}
 const all=await files(root);const htmls=all.filter(p=>p.endsWith('.html'));
 const base=(process.env.SITE_BASE || '/antiguosalumnosatocha').replace(/\/$/,'');
-test('all 14 pages generate with Spanish language and a unique title',async()=>{assert.equal(htmls.length,14);const titles=[];for(const p of htmls){const html=await readFile(p,'utf8');assert.match(html,/<html lang="es">/);titles.push(html.match(/<title>(.*?)<\/title>/)[1]);assert.ok(!html.includes('href="#"'),p)}assert.equal(new Set(titles).size,14)});
+test('all 15 pages generate with Spanish language and a unique title',async()=>{assert.equal(htmls.length,15);const titles=[];for(const p of htmls){const html=await readFile(p,'utf8');assert.match(html,/<html lang="es">/);titles.push(html.match(/<title>(.*?)<\/title>/)[1]);assert.ok(!html.includes('href="#"'),p)}assert.equal(new Set(titles).size,15)});
 test('all local links and bundled assets resolve at the Pages base path',async()=>{for(const p of htmls){const html=await readFile(p,'utf8');for(const match of html.matchAll(/(?:href|src)="([^"#]+)"/g)){const url=match[1].split('#')[0].split('?')[0];if(!url.startsWith('/'))continue;assert.ok(url.startsWith(base+'/'),`${p}: ${url}`);let relative=url.slice(base.length+1);if(!relative||relative.endsWith('/'))relative+='index.html';await assert.doesNotReject(access(join(root,relative)),`${p}: missing ${relative}`)}}});
-test('agenda has no fixture events and registration links to BoscoGest',async()=>{const agenda=await readFile(join(root,'agenda/index.html'),'utf8');assert.match(agenda,/No hay convocatorias futuras confirmadas/);const page=await readFile(join(root,'participa/index.html'),'utf8');assert.match(page,/Pedir ayuda de acceso/);assert.ok(page.includes('href="https://boscogest.com/register"'));assert.ok(!page.includes('forms.gle'))});
+test('agenda uses confirmed Connecting dates and registration links to BoscoGest',async()=>{const agenda=await readFile(join(root,'agenda/index.html'),'utf8');assert.ok(!agenda.includes('Connecting · Conociéndonos'));if(Date.now()<Date.parse('2026-11-15T17:30:00+01:00'))assert.ok(agenda.includes('Connecting · En equipo'));const page=await readFile(join(root,'participa/index.html'),'utf8');assert.match(page,/Pedir ayuda de acceso/);assert.ok(page.includes('href="https://boscogest.com/register"'));assert.ok(!page.includes('forms.gle'))});
 test('Montserrat is bundled locally and controls all UI text',async()=>{assert.ok(all.some(p=>p.includes('montserrat')&&p.endsWith('.woff2')));const css=(await Promise.all(all.filter(p=>p.endsWith('.css')).map(p=>readFile(p,'utf8')))).join('');assert.match(css,/Montserrat/);assert.match(css,/font:inherit/);for(const p of htmls){assert.ok(!(await readFile(p,'utf8')).includes('fonts.googleapis.com'))}});
 
 test('sitemap covers every indexable page with matching canonical URLs and excludes 404',async()=>{
@@ -62,4 +62,38 @@ test('search metadata and structured data identify the association consistently'
   }
  }
  assert.equal(new Set(descriptions).size,descriptions.length);
+});
+
+test('Connecting contains its programme and posters without empty results sections',async()=>{
+ const html=await readFile(join(root,'connecting/index.html'),'utf8');
+ assert.match(html,/Red InterLavapiés/);
+ assert.match(html,/Cuerpo Europeo de Solidaridad/);
+ assert.ok(html.includes('2026-10-25T17:30:00+01:00'));
+ assert.ok(html.includes('2026-11-15T17:30:00+01:00'));
+ for(const name of ['cartel-general.png','conociendonos.png','en-equipo.png','eu-emblem.svg'])await access(join(root,'images/connecting',name));
+ assert.ok(!html.includes('Erasmus+'));
+ assert.ok(!html.includes('Próximamente'));
+ assert.ok(!html.match(/<h[1-6][^>]*>[^<]*(?:Resultados|Lo que vamos haciendo|Crónicas)/i));
+ const home=await readFile(join(root,'index.html'),'utf8');
+ assert.ok(home.includes(base+'/connecting/'));
+ const activities=await readFile(join(root,'actividades/index.html'),'utf8');
+ assert.ok(activities.includes(base+'/connecting/'));
+});
+test('local fragment links resolve to real sections',async()=>{
+ for(const file of htmls){
+  const html=await readFile(file,'utf8');
+  for(const match of html.matchAll(/href="([^"]*#[^"]+)"/g)){
+   const href=match[1];
+   if(!href.startsWith('#') && !href.startsWith('/'))continue;
+   const [pathname,id]=href.split('#');
+   let target=file;
+   if(pathname){
+    let relative=pathname.slice(base.length+1);
+    if(!relative||relative.endsWith('/'))relative+='index.html';
+    target=join(root,relative);
+   }
+   const targetHtml=await readFile(target,'utf8');
+   assert.ok(targetHtml.includes('id="'+id+'"'),file+': '+href);
+  }
+ }
 });
