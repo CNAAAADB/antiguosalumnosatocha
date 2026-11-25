@@ -2,7 +2,7 @@ import {activities} from './site';
 
 const brand = 'Antiguos Alumnos Salesianos Atocha';
 export const seoPages = [
- {path:'',name:'Inicio',title:brand + ' | Asociación de Don Bosco',description:'Asociación de Antiguos Alumnos y Alumnas de Salesianos Atocha, Madrid. Descubre nuestros encuentros, actividades, historia y cómo asociarte en BoscoGest.'},
+ {path:'',name:'Inicio',title:'Asociación de Antiguos Alumnos de Salesianos Atocha | Madrid',description:'Asociación de Antiguos Alumnos y Alumnas de Salesianos Atocha, Madrid. Descubre nuestros encuentros, actividades, historia y cómo asociarte en BoscoGest.'},
  {path:'asociacion',name:'La Asociación',title:'La Asociación | ' + brand,description:'Conoce la Asociación de Antiguos Alumnos y Alumnas de Don Bosco de Salesianos Atocha: amistad, participación y compromiso salesiano en Madrid.'},
  {path:'asociacion/historia',name:'Nuestra historia',title:'Historia de la casa de Atocha | ' + brand,description:'Recorre la historia de Salesianos Atocha desde 1901 y la memoria de sus antiguos alumnos y alumnas: aulas, talleres, encuentros y vida salesiana en Madrid.'},
  {path:'actividades',name:'Qué hacemos',title:'Actividades y encuentros | ' + brand,description:'Encuentros de antiguos alumnos, deporte, ajedrez e iniciativas solidarias de la Asociación de Antiguos Alumnos y Alumnas de Salesianos Atocha.'},
